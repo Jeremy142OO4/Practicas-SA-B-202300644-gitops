@@ -30,3 +30,5 @@ spec:
                 - keyless:
                     issuer: https://token.actions.githubusercontent.com
                     subjectRegExp: "https://github.com/Jeremy142OO4/Practicas-SA-B-202300644/.github/workflows/.*"
+                    rekor:
+                      url: https://rekor.sigstore.dev
