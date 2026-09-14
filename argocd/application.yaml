@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sa-platform
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: practica-8
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Jeremy142OO4/Practicas-SA-B-202300644-gitops.git
+    targetRevision: main
+    path: manifests/dev
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sa-p8
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+
