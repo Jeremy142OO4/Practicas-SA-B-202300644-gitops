@@ -85,7 +85,10 @@ spec:
                         curl --fail --silent --show-error
                         "http://{{args.serviceName}}:4000/health" &&
                         curl --fail --silent --show-error
-                        "http://{{args.serviceName}}:4000/ready"
+                        -H 'Content-Type: application/json'
+                        -d '{"query":"{__typename}"}'
+                        "http://{{args.serviceName}}:4000/catalog/graphql" |
+                        grep -q '"data"'
                     securityContext:
                       runAsNonRoot: true
                       allowPrivilegeEscalation: false

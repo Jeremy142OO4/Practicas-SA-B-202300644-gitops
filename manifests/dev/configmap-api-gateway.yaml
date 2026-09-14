@@ -8,8 +8,8 @@ metadata:
     app.kubernetes.io/part-of: sa-platform
 data:
   PORT: "4000"
-  AUTH_URL: http://auth-ms:4001
-  CATALOG_URL: http://catalog-ms:4002
-  ORDERS_URL: http://orders-ms:4003
-  PAYMENTS_URL: http://payments-ms:4004
+  AUTH_URL: http://auth-ms.sa-p7.svc.cluster.local:4001
+  CATALOG_URL: http://catalog-ms.sa-p7.svc.cluster.local:4002
+  ORDERS_URL: http://orders-ms.sa-p7.svc.cluster.local:4003
+  PAYMENTS_URL: http://payments-ms.sa-p7.svc.cluster.local:4004
   LOG_LEVEL: info
