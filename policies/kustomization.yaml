@@ -4,4 +4,4 @@ resources:
   - no-latest.yaml
   - require-resources.yaml
   - require-nonroot.yaml
-
+  - verify-signature.yaml

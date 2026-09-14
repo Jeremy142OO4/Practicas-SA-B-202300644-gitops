@@ -1,6 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - namespace.yaml
-  - configmap-api-gateway.yaml
-  - serviceaccounts.yaml
+  - services.yaml
+  - analysis-templates.yaml
+  - api-gateway-rollout.yaml

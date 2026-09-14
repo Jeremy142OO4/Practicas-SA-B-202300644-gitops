@@ -1,0 +1,32 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: verify-cosign-signature
+  annotations:
+    policies.kyverno.io/title: Verify signed application images
+    policies.kyverno.io/category: Supply Chain
+spec:
+  validationFailureAction: Enforce
+  background: false
+  webhookConfiguration:
+    failurePolicy: Fail
+  rules:
+    - name: verify-ghcr-images
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaces:
+                - sa-p8
+      verifyImages:
+        - imageReferences:
+            - "ghcr.io/jeremy142oo4/sa-*"
+          mutateDigest: true
+          verifyDigest: true
+          required: true
+          attestors:
+            - entries:
+                - keyless:
+                    issuer: https://token.actions.githubusercontent.com
+                    subjectRegExp: "https://github.com/Jeremy142OO4/Practicas-SA-B-202300644/.github/workflows/.*"

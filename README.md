@@ -1,23 +1,38 @@
 # Practicas-SA-B-202300644-gitops
 
-Repositorio público de manifiestos declarativos para la Práctica 8.
+Repositorio publico e independiente de manifiestos declarativos para la
+Practica 8.
 
-## Principio
+## Fuente de verdad
 
-Este repositorio no contiene código de aplicación ni Dockerfiles. El código fuente permanece en el repositorio principal:
+El repositorio principal contiene el codigo de los microservicios y el
+workflow. Este repositorio contiene unicamente el estado deseado de
+Kubernetes, la aplicacion de ArgoCD, los Rollouts, los analisis, las politicas
+y las referencias a secretos externos.
 
-https://github.com/Jeremy142OO4/Practicas-SA-B-202300644
-
-ArgoCD utilizará este repositorio como fuente de verdad para el estado deseado del clúster.
+ArgoCD es el unico componente autorizado para aplicar estos manifiestos al
+cluster. GitHub Actions solo abre un Pull Request para cambiar la version de
+la imagen despues de ejecutar las validaciones.
 
 ## Estructura
 
 ```text
-argocd/       Aplicaciones de ArgoCD.
-manifests/    Recursos declarativos por ambiente.
-policies/     Políticas Kyverno u OPA.
-rollouts/     Rollouts y AnalysisTemplates.
-secrets/      Referencias a secretos cifrados o externos.
+argocd/       Aplicacion ArgoCD.
+manifests/    Recursos base por ambiente.
+policies/     Politicas Kyverno de admision y firma.
+rollouts/     Rollout canary, Services y AnalysisTemplates.
+secrets/      ExternalSecret sin valores sensibles.
 ```
 
-La configuración inicial de `manifests/dev/` solo prepara el namespace de trabajo. La sincronización automática se habilitará después de validar los manifiestos de la aplicación.
+## Promocion
+
+`api-gateway` usa una estrategia canary con pesos de 10%, 30% y 60%. Cada
+etapa ejecuta una validacion de humo, integracion o carga. Un resultado fuera
+del umbral aborta el Rollout y conserva la version estable.
+
+## Requisitos del cluster
+
+Antes de sincronizar la aplicacion deben estar instalados ArgoCD, Argo
+Rollouts, Kyverno, External Secrets Operator y el `ClusterSecretStore`
+`sa-platform-secrets`. El store se configura fuera de este repositorio para no
+guardar credenciales en texto plano.

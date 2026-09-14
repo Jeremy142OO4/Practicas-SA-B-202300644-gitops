@@ -15,5 +15,9 @@ spec:
     server: https://kubernetes.default.svc
     namespace: sa-p8
   syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true

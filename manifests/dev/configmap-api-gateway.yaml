@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-gateway-config
+  namespace: sa-p8
+  labels:
+    app.kubernetes.io/name: api-gateway
+    app.kubernetes.io/part-of: sa-platform
+data:
+  PORT: "4000"
+  AUTH_URL: http://auth-ms:4001
+  CATALOG_URL: http://catalog-ms:4002
+  ORDERS_URL: http://orders-ms:4003
+  PAYMENTS_URL: http://payments-ms:4004
+  LOG_LEVEL: info
