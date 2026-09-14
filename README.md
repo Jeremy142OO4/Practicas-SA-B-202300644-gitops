@@ -21,7 +21,7 @@ argocd/       Aplicacion ArgoCD.
 manifests/    Recursos base por ambiente.
 policies/     Politicas Kyverno de admision y firma.
 rollouts/     Rollout canary, Services y AnalysisTemplates.
-secrets/      ExternalSecret sin valores sensibles.
+secrets/      ExternalSecret y acceso de solo lectura a secretos de P7.
 ```
 
 ## Promocion
@@ -32,7 +32,7 @@ del umbral aborta el Rollout y conserva la version estable.
 
 ## Requisitos del cluster
 
-Antes de sincronizar la aplicacion deben estar instalados ArgoCD, Argo
-Rollouts, Kyverno, External Secrets Operator y el `ClusterSecretStore`
-`sa-platform-secrets`. El store se configura fuera de este repositorio para no
-guardar credenciales en texto plano.
+ArgoCD, Argo Rollouts, Kyverno y External Secrets Operator deben estar
+instalados. El `ClusterSecretStore` `sa-p7-kubernetes` usa un ServiceAccount
+con permisos de solo lectura sobre los secretos de `sa-p7`; no se guardan
+credenciales en texto plano en este repositorio.
