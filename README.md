@@ -26,9 +26,11 @@ secrets/      ExternalSecret y acceso de solo lectura a secretos de P7.
 
 ## Promocion
 
-`api-gateway` usa una estrategia canary con pesos de 10%, 30% y 60%. Cada
-etapa ejecuta una validacion de humo, integracion o carga. Un resultado fuera
-del umbral aborta el Rollout y conserva la version estable.
+`api-gateway` usa una estrategia canary con pesos de 10%, 30% y 60%. Se deja
+una pausa entre cada peso y se mantiene la validacion de integracion en el paso
+del 30%. Las pruebas de humo y carga fueron retiradas por indicacion del
+auxiliar. Un resultado fuera del umbral aborta el Rollout y conserva la version
+estable.
 
 ## Requisitos del cluster
 

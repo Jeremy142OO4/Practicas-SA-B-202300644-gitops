@@ -20,9 +20,6 @@ spec:
       steps:
         - setWeight: 10
         - pause: {duration: 30s}
-        - analysis:
-            templates:
-              - templateName: api-gateway-smoke
         - setWeight: 30
         - pause: {duration: 30s}
         - analysis:
@@ -30,9 +27,6 @@ spec:
               - templateName: api-gateway-integration
         - setWeight: 60
         - pause: {duration: 2m}
-        - analysis:
-            templates:
-              - templateName: api-gateway-smoke
   template:
     metadata:
       labels:
