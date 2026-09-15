@@ -34,6 +34,7 @@ spec:
         - /spec/emitWarning
         - /spec/rules/0/skipBackgroundRequests
         - /spec/rules/0/validate/allowExistingViolations
+        - /spec/rules/0/verifyImages
         - /status
   syncPolicy:
     automated:
