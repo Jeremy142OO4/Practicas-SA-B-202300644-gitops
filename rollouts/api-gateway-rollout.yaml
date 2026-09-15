@@ -30,6 +30,9 @@ spec:
               - templateName: api-gateway-integration
         - setWeight: 60
         - pause: {duration: 2m}
+        - analysis:
+            templates:
+              - templateName: api-gateway-smoke
   template:
     metadata:
       labels:
