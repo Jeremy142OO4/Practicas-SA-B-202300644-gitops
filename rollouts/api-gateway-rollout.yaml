@@ -29,9 +29,6 @@ spec:
             templates:
               - templateName: api-gateway-integration
         - setWeight: 60
-        - analysis:
-            templates:
-              - templateName: api-gateway-load
         - pause: {duration: 2m}
   template:
     metadata:
