@@ -33,7 +33,7 @@ spec:
         app.kubernetes.io/name: api-gateway
         app.kubernetes.io/part-of: sa-platform
       annotations:
-        p8.gitops/retry: "1"
+        p8.gitops/retry: "2"
     spec:
       serviceAccountName: api-gateway
       terminationGracePeriodSeconds: 30

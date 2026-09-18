@@ -6,7 +6,7 @@ metadata:
 spec:
   args:
     - name: serviceName
-      value: api-gateway-canary
+      value: api-gateway-no-existe
   metrics:
     - name: integration
       count: 2
