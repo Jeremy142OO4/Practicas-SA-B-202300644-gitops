@@ -5,6 +5,7 @@ metadata:
   annotations:
     policies.kyverno.io/title: No latest image tag
     policies.kyverno.io/category: Supply Chain
+    kyverno.io/no-latest-pattern: &no_latest "!*:latest"
 spec:
   validationFailureAction: Enforce
   background: true
@@ -20,5 +21,4 @@ spec:
         pattern:
           spec:
             containers:
-              - image: "!*:latest"
-
+              - image: *no_latest
