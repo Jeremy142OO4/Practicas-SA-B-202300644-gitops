@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - cluster-policy-crd.yaml
   - policy-crd.yaml
+  - mutating-policy-crd.yaml
   - https://github.com/Jeremy142OO4/Practicas-SA-B-202300644-gitops.git//policies?ref=main
 patches:
   - target:
