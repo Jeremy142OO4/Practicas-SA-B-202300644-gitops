@@ -13,6 +13,10 @@ spec:
     targetRevision: 11.4.0
     helm:
       values: |
+        kubectl:
+          image:
+            repository: registry.k8s.io/kubectl
+            tag: v1.35.0
         initContainers:
           - name: velero-plugin-for-gcp
             image: velero/velero-plugin-for-gcp:v1.13.0
