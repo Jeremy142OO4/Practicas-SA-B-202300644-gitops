@@ -20,7 +20,7 @@ spec:
             tag: v1.35.0
         initContainers:
           - name: velero-plugin-for-gcp
-            image: velero/velero-plugin-for-gcp:v1.13.0
+            image: velero/velero-plugin-for-gcp:v1.13.2
             imagePullPolicy: IfNotPresent
             volumeMounts:
               - mountPath: /target
