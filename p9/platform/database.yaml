@@ -46,8 +46,15 @@ spec:
         runAsUser: 999
         runAsGroup: 999
         fsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: postgres
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           image: postgres:17-alpine
           ports:
             - name: postgres
@@ -97,4 +104,3 @@ spec:
         resources:
           requests:
             storage: 10Gi
-
