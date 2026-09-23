@@ -1,0 +1,67 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: p9-velero
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: default
+  source:
+    repoURL: https://vmware-tanzu.github.io/helm-charts
+    chart: velero
+    targetRevision: 11.4.0
+    helm:
+      values: |
+        initContainers:
+          - name: velero-plugin-for-gcp
+            image: velero/velero-plugin-for-gcp:v1.13.0
+            imagePullPolicy: IfNotPresent
+            volumeMounts:
+              - mountPath: /target
+                name: plugins
+        configuration:
+          backupStorageLocation:
+            - name: default
+              provider: gcp
+              bucket: sa-202300644-p9-202300644-velero
+              default: true
+              config:
+                serviceAccount: velero-p9-202300644@sa-202300644.iam.gserviceaccount.com
+          volumeSnapshotLocation:
+            - name: default
+              provider: gcp
+              config:
+                project: sa-202300644
+                snapshotLocation: us-central1
+          defaultVolumesToFsBackup: true
+        serviceAccount:
+          server:
+            create: true
+            name: velero-server
+            annotations:
+              iam.gke.io/gcp-service-account: velero-p9-202300644@sa-202300644.iam.gserviceaccount.com
+        credentials:
+          useSecret: false
+        backupsEnabled: true
+        snapshotsEnabled: true
+        deployNodeAgent: true
+        schedules:
+          p9-daily:
+            disabled: false
+            schedule: "0 */6 * * *"
+            template:
+              ttl: 168h
+              includedNamespaces:
+                - sa-p9
+              storageLocation: default
+              defaultVolumesToFsBackup: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: velero
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

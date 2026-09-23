@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - argo-rollouts.yaml
+  - external-secrets.yaml
+  - kyverno.yaml
+  - velero.yaml
+  - policies.yaml
+  - secrets.yaml
+  - platform.yaml
+

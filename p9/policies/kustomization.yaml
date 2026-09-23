@@ -1,0 +1,42 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - https://github.com/Jeremy142OO4/Practicas-SA-B-202300644-gitops.git//policies?ref=main
+patches:
+  - target:
+      kind: ClusterPolicy
+      name: verify-cosign-signature
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/match/any/0/resources/namespaces/0
+        value: sa-p9
+  - target:
+      kind: ClusterPolicy
+      name: require-nonroot
+    patch: |-
+      - op: add
+        path: /spec/rules/0/exclude
+        value:
+          any:
+            - resources:
+                namespaces:
+                  - argocd
+                  - argo-rollouts
+                  - external-secrets
+                  - kyverno
+                  - velero
+  - target:
+      kind: ClusterPolicy
+      name: require-resources
+    patch: |-
+      - op: add
+        path: /spec/rules/0/exclude
+        value:
+          any:
+            - resources:
+                namespaces:
+                  - argocd
+                  - argo-rollouts
+                  - external-secrets
+                  - kyverno
+                  - velero
