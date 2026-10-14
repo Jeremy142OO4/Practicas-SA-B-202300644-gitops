@@ -14,6 +14,7 @@ spec:
       rollout-track: canary
   endpoints:
     - port: http
+      honorLabels: true
       path: /metrics
       interval: 15s
       relabelings:
@@ -36,6 +37,7 @@ spec:
       rollout-track: stable
   endpoints:
     - port: http
+      honorLabels: true
       path: /metrics
       interval: 15s
       relabelings:
@@ -57,6 +59,7 @@ spec:
       app.kubernetes.io/name: orders-ms
   endpoints:
     - port: http
+      honorLabels: true
       path: /metrics
       interval: 15s
 ---
@@ -75,5 +78,6 @@ spec:
       app.kubernetes.io/name: catalog-ms
   endpoints:
     - port: http
+      honorLabels: true
       path: /metrics
       interval: 15s
