@@ -1,24 +1,460 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: p10-dashboard
+  name: p10-grafana-dashboard
   namespace: observability
   labels:
     grafana_dashboard: "1"
 data:
   sa-platform.json: |
     {
+      "uid": "p10-sa-platform",
       "title": "SA Platform - P10",
       "schemaVersion": 39,
-      "version": 1,
+      "version": 2,
       "refresh": "10s",
-      "tags": ["p10", "observability", "slo"],
-      "templating": {"list": []},
+      "time": {
+        "from": "now-15m",
+        "to": "now"
+      },
+      "tags": [
+        "p10",
+        "observability",
+        "slo"
+      ],
+      "templating": {
+        "list": []
+      },
       "panels": [
-        {"type":"stat","title":"Disponibilidad API","gridPos":{"h":4,"w":6,"x":0,"y":0},"targets":[{"expr":"slo:api_availability:ratio","refId":"A"}]},
-        {"type":"stat","title":"Latencia p95","gridPos":{"h":4,"w":6,"x":6,"y":0},"targets":[{"expr":"histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service=\"api-gateway\"}[5m])))","refId":"A"}]},
-        {"type":"timeseries","title":"Trafico y errores","gridPos":{"h":8,"w":12,"x":0,"y":4},"targets":[{"expr":"sum by (service) (rate(http_server_requests_total[5m]))","legendFormat":"{{service}} solicitudes","refId":"A"},{"expr":"sum by (service) (rate(http_server_requests_total{status=~\"5..\"}[5m]))","legendFormat":"{{service}} errores","refId":"B"}]},
-        {"type":"timeseries","title":"Saturacion CPU","gridPos":{"h":8,"w":12,"x":0,"y":12},"targets":[{"expr":"sum by (pod) (rate(container_cpu_usage_seconds_total{namespace=\"sa-p9\",container!=\"\"}[5m]))","legendFormat":"{{pod}}","refId":"A"}]},
-        {"type":"timeseries","title":"Eventos de negocio","gridPos":{"h":8,"w":12,"x":0,"y":20},"targets":[{"expr":"sum by (event, status) (rate(business_events_total[5m]))","legendFormat":"{{event}} {{status}}","refId":"A"}]}
+        {
+          "id": 1,
+          "type": "stat",
+          "title": "Disponibilidad - ultima hora",
+          "description": "¿Que proporcion de solicitudes de negocio no devolvio HTTP 5xx? Objetivo 99%.",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 4
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "decimals": 2
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "slo:api_availability:ratio",
+              "refId": "A",
+              "legendFormat": "{{service}}{{pod}}"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "type": "stat",
+          "title": "Latencia p95",
+          "description": "¿El 95% de las solicitudes termina antes de 500 ms?",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "x": 6,
+            "y": 0,
+            "w": 6,
+            "h": 4
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "decimals": 2
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "histogram_quantile(0.95,sum by (le)(rate(http_server_request_duration_seconds_bucket{service=\"api-gateway\",route!~\"/health|/metrics\"}[1m])))",
+              "refId": "A",
+              "legendFormat": "{{service}}{{pod}}"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "type": "stat",
+          "title": "Presupuesto disponibilidad consumido",
+          "description": "100% significa que se consumio todo el presupuesto de la hora.",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "x": 12,
+            "y": 0,
+            "w": 6,
+            "h": 4
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "decimals": 2
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "slo:api_availability:error_budget:ratio",
+              "refId": "A",
+              "legendFormat": "{{service}}{{pod}}"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "type": "stat",
+          "title": "Presupuesto latencia consumido",
+          "description": "100% significa que se consumio todo el presupuesto de la hora.",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "x": 18,
+            "y": 0,
+            "w": 6,
+            "h": 4
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "decimals": 2
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "slo:api_latency:error_budget:ratio",
+              "refId": "A",
+              "legendFormat": "{{service}}{{pod}}"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "type": "timeseries",
+          "title": "Trafico - solicitudes por segundo",
+          "description": "¿Cuantas solicitudes de negocio recibe cada servicio?",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "x": 0,
+            "y": 4,
+            "w": 12,
+            "h": 7
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "reqps",
+              "decimals": 2
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum by(service)(rate(http_server_requests_total{route!~\"/health|/metrics|/metrics/\"}[1m]))",
+              "refId": "A",
+              "legendFormat": "{{service}}{{pod}}"
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "type": "timeseries",
+          "title": "Errores HTTP 5xx",
+          "description": "¿Los usuarios reciben errores HTTP? Los errores GraphQL HTTP 200 no se cuentan como 5xx.",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "x": 12,
+            "y": 4,
+            "w": 12,
+            "h": 7
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "reqps",
+              "decimals": 2
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "(sum(rate(http_server_requests_total{service=\"api-gateway\",route!~\"/health|/metrics\",status=~\"5..\"}[1m])) or (sum(rate(http_server_requests_total{service=\"api-gateway\",route!~\"/health|/metrics\"}[1m])) * 0))",
+              "refId": "A",
+              "legendFormat": "{{service}}{{pod}}"
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "type": "timeseries",
+          "title": "Saturacion - CPU por pod",
+          "description": "¿Que pod esta consumiendo CPU?",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "x": 0,
+            "y": 11,
+            "w": 12,
+            "h": 7
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "cores",
+              "decimals": 2
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum by(pod)(rate(container_cpu_usage_seconds_total{namespace=\"sa-p9\",container!=\"\",container!=\"POD\"}[1m]))",
+              "refId": "A",
+              "legendFormat": "{{service}}{{pod}}"
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "type": "timeseries",
+          "title": "Saturacion - memoria por pod",
+          "description": "¿Que pod esta consumiendo memoria?",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "x": 12,
+            "y": 11,
+            "w": 12,
+            "h": 7
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "decimals": 2
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum by(pod)(container_memory_working_set_bytes{namespace=\"sa-p9\",container!=\"\",container!=\"POD\"})",
+              "refId": "A",
+              "legendFormat": "{{service}}{{pod}}"
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "type": "stat",
+          "title": "Resultados de pagos aprobados",
+          "description": "Callbacks de pago APROBADO procesados. Cero significa que no se observaron callbacks, no que falte telemetria.",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "x": 0,
+            "y": 18,
+            "w": 12,
+            "h": 4
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 2
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum(payments_approved_total)",
+              "refId": "A",
+              "legendFormat": "{{service}}{{pod}}"
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "type": "stat",
+          "title": "Resultados de pagos rechazados",
+          "description": "Callbacks de pago RECHAZADO procesados. Una excepcion de la API no se cuenta como rechazo de pago.",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "x": 12,
+            "y": 18,
+            "w": 12,
+            "h": 4
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 2
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum(payments_rejected_total)",
+              "refId": "A",
+              "legendFormat": "{{service}}{{pod}}"
+            }
+          ]
+        }
       ]
     }
