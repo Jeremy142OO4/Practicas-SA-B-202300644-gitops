@@ -29,3 +29,7 @@ spec:
       containers:
         - name: api-gateway
           image: ghcr.io/jeremy142oo4/sa-api-gateway:p10-v1.0.0
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
