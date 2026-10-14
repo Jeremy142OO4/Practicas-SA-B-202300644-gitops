@@ -34,6 +34,7 @@ spec:
     metadata:
       annotations:
         p10.observability/enabled: "true"
+        p10.demo/retry: "baseline-1"
     spec:
       containers:
         - name: api-gateway
