@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-ms
+  namespace: sa-p9
+spec:
+  template:
+    spec:
+      containers:
+        - name: orders-ms
+          image: ghcr.io/jeremy142oo4/sa-orders-ms:p10-v1.0.0
+          env:
+            - name: CATALOG_URL
+              value: http://catalog-ms.sa-p9.svc.cluster.local:4002/graphql
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-ms
+  namespace: sa-p9
+spec:
+  template:
+    spec:
+      containers:
+        - name: catalog-ms
+          image: ghcr.io/jeremy142oo4/sa-catalog-ms:p10-v1.0.0

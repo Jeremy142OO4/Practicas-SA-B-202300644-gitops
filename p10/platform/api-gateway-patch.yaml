@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: api-gateway
+  namespace: sa-p9
+spec:
+  strategy:
+    canary:
+      steps:
+        - setWeight: 10
+        - pause: {duration: 30s}
+        - analysis:
+            templates:
+              - templateName: api-gateway-metrics
+        - setWeight: 30
+        - analysis:
+            templates:
+              - templateName: api-gateway-metrics
+        - setWeight: 60
+        - analysis:
+            templates:
+              - templateName: api-gateway-metrics
+        - pause: {duration: 2m}
+  template:
+    metadata:
+      annotations:
+        p10.observability/enabled: "true"
+    spec:
+      containers:
+        - name: api-gateway
+          image: ghcr.io/jeremy142oo4/sa-api-gateway:p10-v1.0.0

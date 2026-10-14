@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-gateway-config
+  namespace: sa-p9
+data:
+  AUTH_URL: http://auth-ms.sa-p9.svc.cluster.local:4001
+  CATALOG_URL: http://catalog-ms.sa-p9.svc.cluster.local:4002
+  ORDERS_URL: http://orders-ms.sa-p9.svc.cluster.local:4003
+  PAYMENTS_URL: http://payments-ms.sa-p9.svc.cluster.local:4004

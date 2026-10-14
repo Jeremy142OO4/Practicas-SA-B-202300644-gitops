@@ -1,0 +1,6 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: api-gateway-integration
+  namespace: sa-p9
+$patch: delete
