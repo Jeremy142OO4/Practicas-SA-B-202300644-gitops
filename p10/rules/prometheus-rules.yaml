@@ -48,7 +48,7 @@ spec:
           annotations:
             summary: "Consumo acelerado del presupuesto de disponibilidad"
             description: "El consumo supera 2 veces el ritmo permitido en ventanas de 1 y 5 minutos. Revisar la candidata y seguir el runbook."
-            runbook_url: https://github.com/Jeremy142OO4/Practicas-SA-B-202300644/blob/main/P10/docs/RUNBOOK.md#disponibilidad
+            runbook_url: https://github.com/Jeremy142OO4/Practicas-SA-B-202300644-gitops/blob/main/p10/docs/RUNBOOK.md#disponibilidad
         - alert: ApiLatencyErrorBudgetBurn
           expr: |
             (slo:api_latency:burn_rate_1m > 2)
@@ -60,5 +60,5 @@ spec:
           annotations:
             summary: "Consumo acelerado del presupuesto de latencia"
             description: "El consumo supera 2 veces el ritmo permitido en ventanas de 1 y 5 minutos. Revisar la candidata y seguir el runbook."
-            runbook_url: https://github.com/Jeremy142OO4/Practicas-SA-B-202300644/blob/main/P10/docs/RUNBOOK.md#latencia
+            runbook_url: https://github.com/Jeremy142OO4/Practicas-SA-B-202300644-gitops/blob/main/p10/docs/RUNBOOK.md#latencia
 
