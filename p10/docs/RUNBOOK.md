@@ -56,6 +56,8 @@ a mas de dos veces el ritmo permitido. Una latencia alta aislada no basta.
 
 1. Consultar `slo:api_latency:burn_rate_1m` y
    `slo:api_latency:burn_rate_5m`; revisar el p95.
+   Si la alerta incluye un pod candidato, consultar tambien
+   `slo:canary_latency:burn_rate_1m` y `slo:canary_latency:burn_rate_5m`.
 2. Buscar en Tempo la ruta /orders/graphql durante el intervalo de la alerta.
 3. Abrir la traza y comparar la duracion de gateway, orders-ms y catalog-ms.
 4. En Loki buscar el mismo trace_id. Para la falla de demostracion,
@@ -125,4 +127,3 @@ Si no hay muestras, el analisis no debe promocionar. Verificar ServiceMonitor,
 targets y trafico antes de reintentar. Un historial de pocos minutos no
 demuestra una hora completa. Los callbacks de pago se cuentan como resultados
 procesados, no como cobros unicos ni ingresos monetarios.
-
