@@ -39,6 +39,11 @@ data:
       targets = discovery.kubernetes.pods.targets
       rule {
         source_labels = ["__meta_kubernetes_namespace"]
+        regex         = "sa-p9"
+        action        = "keep"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_namespace"]
         target_label  = "namespace"
       }
       rule {
@@ -59,7 +64,7 @@ data:
     }
 ---
 apiVersion: apps/v1
-kind: DaemonSet
+kind: Deployment
 metadata:
   name: alloy
   namespace: observability
@@ -81,7 +86,6 @@ spec:
           args: ["run", "/etc/alloy/config.alloy"]
           volumeMounts:
             - {name: config, mountPath: /etc/alloy}
-            - {name: pods, mountPath: /var/log/pods, readOnly: true}
           resources:
             requests: {cpu: 25m, memory: 64Mi}
             limits: {cpu: 150m, memory: 192Mi}
@@ -89,6 +93,3 @@ spec:
         - name: config
           configMap:
             name: alloy-config
-        - name: pods
-          hostPath:
-            path: /var/log/pods
