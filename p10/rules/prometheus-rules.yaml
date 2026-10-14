@@ -9,57 +9,56 @@ metadata:
 spec:
   groups:
     - name: p10.slo.recording
-      interval: 30s
+      interval: 15s
       rules:
         - record: slo:api_availability:ratio
           expr: |
-            sum(rate(http_server_requests_total{service="api-gateway",status!~"5.."}[5m]))
-            /
-            sum(rate(http_server_requests_total{service="api-gateway"}[5m]))
+            sum(increase(http_server_requests_total{service="api-gateway",route!~"/health|/metrics",status!~"5.."}[1h])) / sum(increase(http_server_requests_total{service="api-gateway",route!~"/health|/metrics"}[1h]))
         - record: slo:api_latency:ratio
           expr: |
-            sum(rate(http_server_request_duration_seconds_bucket{service="api-gateway",le="0.5"}[5m]))
-            /
-            sum(rate(http_server_request_duration_seconds_count{service="api-gateway"}[5m]))
+            sum(increase(http_server_request_duration_seconds_bucket{service="api-gateway",route!~"/health|/metrics",le="0.5"}[1h])) / sum(increase(http_server_request_duration_seconds_count{service="api-gateway",route!~"/health|/metrics"}[1h]))
         - record: slo:api_availability:error_budget:ratio
-          expr: 1 - slo:api_availability:ratio
+          expr: |
+            clamp_min((1 - slo:api_availability:ratio) / 0.01, 0)
         - record: slo:api_latency:error_budget:ratio
-          expr: 1 - slo:api_latency:ratio
-        - record: api_gateway:canary_error_rate
           expr: |
-            sum(rate(http_server_requests_total{service="api-gateway",rollout_track="canary",status=~"5.."}[5m]))
-            /
-            sum(rate(http_server_requests_total{service="api-gateway",rollout_track="canary"}[5m]))
-        - record: api_gateway:canary_latency_p95
+            clamp_min((1 - slo:api_latency:ratio) / 0.05, 0)
+        - record: slo:api_availability:burn_rate_1m
           expr: |
-            histogram_quantile(0.95,
-              sum by (le) (rate(http_server_request_duration_seconds_bucket{service="api-gateway",rollout_track="canary"}[5m])))
+            (sum(rate(http_server_requests_total{service="api-gateway",route!~"/health|/metrics",status=~"5.."}[1m])) or (sum(rate(http_server_requests_total{service="api-gateway",route!~"/health|/metrics"}[1m])) * 0)) / clamp_min(sum(rate(http_server_requests_total{service="api-gateway",route!~"/health|/metrics"}[1m])), 0.000001) / 0.01
+        - record: slo:api_latency:burn_rate_1m
+          expr: |
+            clamp_min(1 - sum(rate(http_server_request_duration_seconds_bucket{service="api-gateway",route!~"/health|/metrics",le="0.5"}[1m])) / sum(rate(http_server_request_duration_seconds_count{service="api-gateway",route!~"/health|/metrics"}[1m])), 0) / 0.05
+        - record: slo:api_availability:burn_rate_5m
+          expr: |
+            (sum(rate(http_server_requests_total{service="api-gateway",route!~"/health|/metrics",status=~"5.."}[5m])) or (sum(rate(http_server_requests_total{service="api-gateway",route!~"/health|/metrics"}[5m])) * 0)) / clamp_min(sum(rate(http_server_requests_total{service="api-gateway",route!~"/health|/metrics"}[5m])), 0.000001) / 0.01
+        - record: slo:api_latency:burn_rate_5m
+          expr: |
+            clamp_min(1 - sum(rate(http_server_request_duration_seconds_bucket{service="api-gateway",route!~"/health|/metrics",le="0.5"}[5m])) / sum(rate(http_server_request_duration_seconds_count{service="api-gateway",route!~"/health|/metrics"}[5m])), 0) / 0.05
     - name: p10.slo.alerts
       rules:
         - alert: ApiAvailabilityErrorBudgetBurn
-          expr: slo:api_availability:error_budget:ratio > 0.01
-          for: 2m
+          expr: |
+            (slo:api_availability:burn_rate_1m > 2)
+            and (slo:api_availability:burn_rate_5m > 2)
+            and (sum(increase(http_server_requests_total{service="api-gateway",route!~"/health|/metrics"}[5m])) >= 2)
+          for: 30s
           labels:
             severity: warning
-            runbook: P10/docs/RUNBOOK.md
           annotations:
-            summary: "El SLO de disponibilidad esta consumiendo el error budget"
-            description: "La disponibilidad del API esta debajo de 99% durante 2 minutos."
+            summary: "Consumo acelerado del presupuesto de disponibilidad"
+            description: "El consumo supera 2 veces el ritmo permitido en ventanas de 1 y 5 minutos. Revisar la candidata y seguir el runbook."
+            runbook_url: https://github.com/Jeremy142OO4/Practicas-SA-B-202300644/blob/main/P10/docs/RUNBOOK.md#disponibilidad
         - alert: ApiLatencyErrorBudgetBurn
-          expr: slo:api_latency:error_budget:ratio > 0.05
-          for: 2m
+          expr: |
+            (slo:api_latency:burn_rate_1m > 2)
+            and (slo:api_latency:burn_rate_5m > 2)
+            and (sum(increase(http_server_requests_total{service="api-gateway",route!~"/health|/metrics"}[5m])) >= 2)
+          for: 30s
           labels:
             severity: warning
-            runbook: P10/docs/RUNBOOK.md
           annotations:
-            summary: "El SLO de latencia esta consumiendo el error budget"
-            description: "Menos del 95% de las solicitudes termina en menos de 500 ms."
-        - alert: ApiCanaryErrorRateHigh
-          expr: api_gateway:canary_error_rate > 0.05
-          for: 1m
-          labels:
-            severity: critical
-            runbook: P10/docs/RUNBOOK.md
-          annotations:
-            summary: "El canary supera el 5% de errores"
-            description: "Argo Rollouts debe abortar la promocion de la candidata."
+            summary: "Consumo acelerado del presupuesto de latencia"
+            description: "El consumo supera 2 veces el ritmo permitido en ventanas de 1 y 5 minutos. Revisar la candidata y seguir el runbook."
+            runbook_url: https://github.com/Jeremy142OO4/Practicas-SA-B-202300644/blob/main/P10/docs/RUNBOOK.md#latencia
+

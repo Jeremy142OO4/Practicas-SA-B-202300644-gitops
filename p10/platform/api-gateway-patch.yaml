@@ -12,14 +12,23 @@ spec:
         - analysis:
             templates:
               - templateName: api-gateway-metrics
+            args:
+              - name: podHash
+                valueFrom: {podTemplateHashValue: Latest}
         - setWeight: 30
         - analysis:
             templates:
               - templateName: api-gateway-metrics
+            args:
+              - name: podHash
+                valueFrom: {podTemplateHashValue: Latest}
         - setWeight: 60
         - analysis:
             templates:
               - templateName: api-gateway-metrics
+            args:
+              - name: podHash
+                valueFrom: {podTemplateHashValue: Latest}
         - pause: {duration: 2m}
   template:
     metadata:
