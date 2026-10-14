@@ -1,0 +1,65 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: p10-slos
+  namespace: observability
+  labels:
+    release: p10-monitoring
+    app.kubernetes.io/part-of: practica-10
+spec:
+  groups:
+    - name: p10.slo.recording
+      interval: 30s
+      rules:
+        - record: slo:api_availability:ratio
+          expr: |
+            sum(rate(http_server_requests_total{service="api-gateway",status!~"5.."}[5m]))
+            /
+            sum(rate(http_server_requests_total{service="api-gateway"}[5m]))
+        - record: slo:api_latency:ratio
+          expr: |
+            sum(rate(http_server_request_duration_seconds_bucket{service="api-gateway",le="0.5"}[5m]))
+            /
+            sum(rate(http_server_request_duration_seconds_count{service="api-gateway"}[5m]))
+        - record: slo:api_availability:error_budget:ratio
+          expr: 1 - slo:api_availability:ratio
+        - record: slo:api_latency:error_budget:ratio
+          expr: 1 - slo:api_latency:ratio
+        - record: api_gateway:canary_error_rate
+          expr: |
+            sum(rate(http_server_requests_total{service="api-gateway",rollout_track="canary",status=~"5.."}[5m]))
+            /
+            sum(rate(http_server_requests_total{service="api-gateway",rollout_track="canary"}[5m]))
+        - record: api_gateway:canary_latency_p95
+          expr: |
+            histogram_quantile(0.95,
+              sum by (le) (rate(http_server_request_duration_seconds_bucket{service="api-gateway",rollout_track="canary"}[5m])))
+    - name: p10.slo.alerts
+      rules:
+        - alert: ApiAvailabilityErrorBudgetBurn
+          expr: slo:api_availability:error_budget:ratio > 0.01
+          for: 2m
+          labels:
+            severity: warning
+            runbook: P10/docs/RUNBOOK.md
+          annotations:
+            summary: "El SLO de disponibilidad esta consumiendo el error budget"
+            description: "La disponibilidad del API esta debajo de 99% durante 2 minutos."
+        - alert: ApiLatencyErrorBudgetBurn
+          expr: slo:api_latency:error_budget:ratio > 0.05
+          for: 2m
+          labels:
+            severity: warning
+            runbook: P10/docs/RUNBOOK.md
+          annotations:
+            summary: "El SLO de latencia esta consumiendo el error budget"
+            description: "Menos del 95% de las solicitudes termina en menos de 500 ms."
+        - alert: ApiCanaryErrorRateHigh
+          expr: api_gateway:canary_error_rate > 0.05
+          for: 1m
+          labels:
+            severity: critical
+            runbook: P10/docs/RUNBOOK.md
+          annotations:
+            summary: "El canary supera el 5% de errores"
+            description: "Argo Rollouts debe abortar la promocion de la candidata."
