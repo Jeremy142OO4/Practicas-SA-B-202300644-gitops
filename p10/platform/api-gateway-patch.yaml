@@ -34,15 +34,12 @@ spec:
     metadata:
       annotations:
         p10.observability/enabled: "true"
-        p10.demo/retry: "fault-2"
+        p10.demo/retry: "baseline-1"
     spec:
       containers:
         - name: api-gateway
           image: ghcr.io/jeremy142oo4/sa-api-gateway:p10-v1.0.5
           imagePullPolicy: IfNotPresent
-          env:
-            - name: P10_DEMO_DELAY_MS
-              value: "1200"
           ports:
             - name: http
               containerPort: 4000
