@@ -13,3 +13,11 @@ metadata:
   namespace: sa-p9
   labels:
     rollout-track: stable
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-ms
+  namespace: sa-p9
+  labels:
+    app.kubernetes.io/name: orders-ms
