@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/Jeremy142OO4/Practicas-SA-B-202300644-gitops.git
     targetRevision: main
-    path: p9/platform
+    path: p10/platform
   destination:
     server: https://kubernetes.default.svc
     namespace: sa-p9
