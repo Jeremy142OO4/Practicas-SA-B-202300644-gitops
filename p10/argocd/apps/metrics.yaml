@@ -16,6 +16,9 @@ spec:
       values: |
         grafana:
           enabled: true
+          grafana.ini:
+            security:
+              csrf_trusted_origins: "8086-cs-114384685560-default.cs-us-east1-rtep.cloudshell.dev"
           defaultDashboardsEnabled: false
           persistence:
             enabled: false
