@@ -25,6 +25,7 @@ spec:
         app.kubernetes.io/name: orders-ms
     spec:
       serviceAccountName: orders-ms
+      terminationGracePeriodSeconds: 45
       securityContext:
         runAsNonRoot: true
         runAsUser: 10001
@@ -40,6 +41,10 @@ spec:
               topologyKey: kubernetes.io/hostname
       containers:
         - name: orders-ms
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "sleep 15"]
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:

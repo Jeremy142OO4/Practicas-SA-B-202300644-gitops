@@ -8,7 +8,9 @@ resources:
   - rabbitmq.yaml
   - orders.yaml
   - pdb.yaml
+  - gateway-pdb.yaml
 patches:
+  - path: gateway-resilience.yaml
   - target:
       kind: Namespace
       name: sa-p8

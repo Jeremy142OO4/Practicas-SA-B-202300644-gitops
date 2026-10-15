@@ -4,7 +4,6 @@ metadata:
   name: api-gateway
   namespace: sa-p9
 spec:
-  replicas: 2
   strategy:
     canary:
       steps:
@@ -37,15 +36,6 @@ spec:
         p10.observability/enabled: "true"
         p10.demo/retry: "baseline-1"
     spec:
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app.kubernetes.io/name: api-gateway
-                topologyKey: kubernetes.io/hostname
       containers:
         - name: api-gateway
           image: ghcr.io/jeremy142oo4/sa-api-gateway:p10-v1.0.7

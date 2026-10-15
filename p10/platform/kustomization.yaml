@@ -5,7 +5,6 @@ resources:
   - analysis-templates.yaml
   - catalog.yaml
   - catalog-pdb.yaml
-  - gateway-pdb.yaml
 patches:
   - path: gateway-config.yaml
   - path: api-gateway-patch.yaml
