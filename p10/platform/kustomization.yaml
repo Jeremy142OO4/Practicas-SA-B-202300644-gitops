@@ -4,6 +4,8 @@ resources:
   - https://github.com/Jeremy142OO4/Practicas-SA-B-202300644-gitops.git//p9/platform?ref=main
   - analysis-templates.yaml
   - catalog.yaml
+  - catalog-pdb.yaml
+  - gateway-pdb.yaml
 patches:
   - path: gateway-config.yaml
   - path: api-gateway-patch.yaml

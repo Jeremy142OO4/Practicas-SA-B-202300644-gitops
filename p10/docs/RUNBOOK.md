@@ -102,10 +102,10 @@ identificar el registro que explica la causa. Se guarda la hora de ambos pasos.
 
 ```bash
 kubectl port-forward --address 0.0.0.0 -n observability \
-  svc/p10-monitoring-grafana 8080:80
+  svc/p10-monitoring-grafana 8086:80
 ```
 
-En Cloud Shell usar Vista previa web, puerto 8080. Usuario: admin.
+En Cloud Shell usar Vista previa web, puerto 8086. Usuario: admin.
 La contraseña esta en el Secret administrado por el chart; no se guarda en Git:
 
 ```bash
