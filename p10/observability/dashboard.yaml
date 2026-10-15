@@ -11,7 +11,7 @@ data:
       "uid": "p10-sa-platform",
       "title": "SA Platform - P10",
       "schemaVersion": 39,
-      "version": 2,
+      "version": 3,
       "refresh": "10s",
       "time": {
         "from": "now-15m",
@@ -44,7 +44,20 @@ data:
           "fieldConfig": {
             "defaults": {
               "unit": "percentunit",
-              "decimals": 2
+              "decimals": 2,
+              "noValue": "Sin trafico / sin datos",
+              "mappings": [
+                {
+                  "type": "special",
+                  "options": {
+                    "match": "nan",
+                    "result": {
+                      "text": "Sin trafico / sin datos",
+                      "color": "gray"
+                    }
+                  }
+                }
+              ]
             },
             "overrides": []
           },
@@ -53,7 +66,7 @@ data:
             "graphMode": "none",
             "reduceOptions": {
               "calcs": [
-                "lastNotNull"
+                "last"
               ],
               "fields": "",
               "values": false
@@ -67,7 +80,9 @@ data:
               },
               "expr": "slo:api_availability:ratio",
               "refId": "A",
-              "legendFormat": "{{service}}{{pod}}"
+              "legendFormat": "{{service}}{{pod}}",
+              "instant": true,
+              "range": false
             }
           ]
         },
@@ -89,7 +104,20 @@ data:
           "fieldConfig": {
             "defaults": {
               "unit": "s",
-              "decimals": 2
+              "decimals": 2,
+              "noValue": "Sin trafico / sin datos",
+              "mappings": [
+                {
+                  "type": "special",
+                  "options": {
+                    "match": "nan",
+                    "result": {
+                      "text": "Sin trafico / sin datos",
+                      "color": "gray"
+                    }
+                  }
+                }
+              ]
             },
             "overrides": []
           },
@@ -98,7 +126,7 @@ data:
             "graphMode": "none",
             "reduceOptions": {
               "calcs": [
-                "lastNotNull"
+                "last"
               ],
               "fields": "",
               "values": false
@@ -112,7 +140,9 @@ data:
               },
               "expr": "histogram_quantile(0.95,sum by (le)(rate(http_server_request_duration_seconds_bucket{service=\"api-gateway\",route!~\"/health|/metrics\"}[1m])))",
               "refId": "A",
-              "legendFormat": "{{service}}{{pod}}"
+              "legendFormat": "{{service}}{{pod}}",
+              "instant": true,
+              "range": false
             }
           ]
         },
@@ -134,7 +164,20 @@ data:
           "fieldConfig": {
             "defaults": {
               "unit": "percentunit",
-              "decimals": 2
+              "decimals": 2,
+              "noValue": "Sin trafico / sin datos",
+              "mappings": [
+                {
+                  "type": "special",
+                  "options": {
+                    "match": "nan",
+                    "result": {
+                      "text": "Sin trafico / sin datos",
+                      "color": "gray"
+                    }
+                  }
+                }
+              ]
             },
             "overrides": []
           },
@@ -143,7 +186,7 @@ data:
             "graphMode": "none",
             "reduceOptions": {
               "calcs": [
-                "lastNotNull"
+                "last"
               ],
               "fields": "",
               "values": false
@@ -157,7 +200,9 @@ data:
               },
               "expr": "slo:api_availability:error_budget:ratio",
               "refId": "A",
-              "legendFormat": "{{service}}{{pod}}"
+              "legendFormat": "{{service}}{{pod}}",
+              "instant": true,
+              "range": false
             }
           ]
         },
@@ -179,7 +224,20 @@ data:
           "fieldConfig": {
             "defaults": {
               "unit": "percentunit",
-              "decimals": 2
+              "decimals": 2,
+              "noValue": "Sin trafico / sin datos",
+              "mappings": [
+                {
+                  "type": "special",
+                  "options": {
+                    "match": "nan",
+                    "result": {
+                      "text": "Sin trafico / sin datos",
+                      "color": "gray"
+                    }
+                  }
+                }
+              ]
             },
             "overrides": []
           },
@@ -188,7 +246,7 @@ data:
             "graphMode": "none",
             "reduceOptions": {
               "calcs": [
-                "lastNotNull"
+                "last"
               ],
               "fields": "",
               "values": false
@@ -202,7 +260,9 @@ data:
               },
               "expr": "slo:api_latency:error_budget:ratio",
               "refId": "A",
-              "legendFormat": "{{service}}{{pod}}"
+              "legendFormat": "{{service}}{{pod}}",
+              "instant": true,
+              "range": false
             }
           ]
         },
@@ -384,7 +444,20 @@ data:
           "fieldConfig": {
             "defaults": {
               "unit": "short",
-              "decimals": 2
+              "decimals": 2,
+              "noValue": "Sin trafico / sin datos",
+              "mappings": [
+                {
+                  "type": "special",
+                  "options": {
+                    "match": "nan",
+                    "result": {
+                      "text": "Sin trafico / sin datos",
+                      "color": "gray"
+                    }
+                  }
+                }
+              ]
             },
             "overrides": []
           },
@@ -393,7 +466,7 @@ data:
             "graphMode": "none",
             "reduceOptions": {
               "calcs": [
-                "lastNotNull"
+                "last"
               ],
               "fields": "",
               "values": false
@@ -407,7 +480,9 @@ data:
               },
               "expr": "sum(payments_approved_total)",
               "refId": "A",
-              "legendFormat": "{{service}}{{pod}}"
+              "legendFormat": "{{service}}{{pod}}",
+              "instant": true,
+              "range": false
             }
           ]
         },
@@ -429,7 +504,20 @@ data:
           "fieldConfig": {
             "defaults": {
               "unit": "short",
-              "decimals": 2
+              "decimals": 2,
+              "noValue": "Sin trafico / sin datos",
+              "mappings": [
+                {
+                  "type": "special",
+                  "options": {
+                    "match": "nan",
+                    "result": {
+                      "text": "Sin trafico / sin datos",
+                      "color": "gray"
+                    }
+                  }
+                }
+              ]
             },
             "overrides": []
           },
@@ -438,7 +526,7 @@ data:
             "graphMode": "none",
             "reduceOptions": {
               "calcs": [
-                "lastNotNull"
+                "last"
               ],
               "fields": "",
               "values": false
@@ -452,7 +540,9 @@ data:
               },
               "expr": "sum(payments_rejected_total)",
               "refId": "A",
-              "legendFormat": "{{service}}{{pod}}"
+              "legendFormat": "{{service}}{{pod}}",
+              "instant": true,
+              "range": false
             }
           ]
         }

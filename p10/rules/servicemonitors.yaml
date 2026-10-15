@@ -1,7 +1,8 @@
+# Un target por pod, aunque stable y canary apunten al mismo gateway.
 apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
+kind: PodMonitor
 metadata:
-  name: p10-api-gateway-canary
+  name: p10-api-gateway
   namespace: observability
   labels:
     release: p10-monitoring
@@ -11,38 +12,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: api-gateway
-      rollout-track: canary
-  endpoints:
+  podMetricsEndpoints:
     - port: http
       honorLabels: true
       path: /metrics
       interval: 15s
-      relabelings:
-        - sourceLabels: [__meta_kubernetes_service_label_rollout_track]
-          targetLabel: rollout_track
----
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  name: p10-api-gateway-stable
-  namespace: observability
-  labels:
-    release: p10-monitoring
-spec:
-  namespaceSelector:
-    matchNames: [sa-p9]
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: api-gateway
-      rollout-track: stable
-  endpoints:
-    - port: http
-      honorLabels: true
-      path: /metrics
-      interval: 15s
-      relabelings:
-        - sourceLabels: [__meta_kubernetes_service_label_rollout_track]
-          targetLabel: rollout_track
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
