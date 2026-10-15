@@ -38,7 +38,7 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: ghcr.io/jeremy142oo4/sa-api-gateway:p10-v1.0.5
+          image: ghcr.io/jeremy142oo4/sa-api-gateway:p10-v1.0.7
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
